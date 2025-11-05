@@ -1,25 +1,26 @@
 export default function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   
-  return res.status(200).json({ 
+  res.status(200).json({ 
     test: 'working',
     items: [
       {
-        title: 'Test Pokemon Card',
-        price: 599.99,
+        title: 'Test Pokemon PSA 10 Charizard',
+        price: 1599.99,
         currency: 'USD',
-        image: 'https://via.placeholder.com/400',
+        image: 'https://via.placeholder.com/400x400/1a1a1a/ffffff?text=Test+Card',
         url: 'https://ebay.com',
         condition: 'PSA 10'
+      },
+      {
+        title: 'Test Pokemon PSA 9 Blastoise',
+        price: 899.99,
+        currency: 'USD',
+        image: 'https://via.placeholder.com/400x400/1a1a1a/ffffff?text=Test+Card+2',
+        url: 'https://ebay.com',
+        condition: 'PSA 9'
       }
     ],
-    count: 1
+    count: 2
   });
 }
-```
-
-This just returns fake data to test if the function works at all.
-
-**Commit this, wait 30 seconds, then test:**
-```
-https://ebay-api-proxy.vercel.app/api/search
