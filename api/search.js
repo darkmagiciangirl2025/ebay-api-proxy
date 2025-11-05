@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       `&REST-PAYLOAD` +
       `&keywords=${encodeURIComponent(query)}` +
       `&paginationInput.entriesPerPage=20` +
-      `&sortOrder=StartTimeNewest` +
+      `&sortOrder=PricePlusShippingHighest` +
       `&itemFilter(0).name=MinPrice` +
       `&itemFilter(0).value=1000` +
       `&itemFilter(0).paramName=Currency` +
