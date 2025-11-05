@@ -13,11 +13,12 @@ export default async function handler(req, res) {
       `&RESPONSE-DATA-FORMAT=JSON` +
       `&REST-PAYLOAD` +
       `&keywords=${encodeURIComponent(query)}` +
-      `&paginationInput.entriesPerPage=12` +
-      `&sortOrder=PricePlusShippingHighest` +
-      `&itemFilter(0).name=ListingType` +
-      `&itemFilter(0).value(0)=AuctionWithBIN` +
-      `&itemFilter(0).value(1)=FixedPrice`;
+      `&paginationInput.entriesPerPage=20` +
+      `&sortOrder=StartTimeNewest` +
+      `&itemFilter(0).name=MinPrice` +
+      `&itemFilter(0).value=1000` +
+      `&itemFilter(0).paramName=Currency` +
+      `&itemFilter(0).paramValue=USD`;
     
     const response = await fetch(ebayUrl);
     const data = await response.json();
@@ -25,17 +26,25 @@ export default async function handler(req, res) {
     const items = data.findItemsAdvancedResponse?.[0]?.searchResult?.[0]?.item || [];
     
     const formattedItems = items.map(item => ({
-      title: item.title?.[0],
-      price: item.sellingStatus?.[0]?.currentPrice?.[0]?.__value__,
-      currency: item.sellingStatus?.[0]?.currentPrice?.[0]?.['@currencyId'],
-      image: item.galleryURL?.[0],
-      url: item.viewItemURL?.[0],
-      condition: item.condition?.[0]?.conditionDisplayName?.[0] || 'N/A'
+      title: item.title?.[0] || 'Untitled',
+      price: item.sellingStatus?.[0]?.currentPrice?.[0]?.__value__ || '0',
+      currency: item.sellingStatus?.[0]?.currentPrice?.[0]?.['@currencyId'] || 'USD',
+      image: item.galleryURL?.[0] || item.pictureURLLarge?.[0] || '',
+      url: item.viewItemURL?.[0] || '',
+      condition: item.condition?.[0]?.conditionDisplayName?.[0] || 'See listing'
     }));
     
-    res.status(200).json({ items: formattedItems });
+    res.status(200).json({ 
+      items: formattedItems,
+      count: formattedItems.length 
+    });
     
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch eBay listings', details: error.message });
+    console.error('eBay API Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch eBay listings', 
+      details: error.message,
+      items: []
+    });
   }
 }
